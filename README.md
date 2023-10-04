@@ -45,8 +45,6 @@ Favorites Management: When adding items to the favorites list, the app checks fo
 API Key Handling: The app does not require API keys since it uses a publicly accessible iTunes Search API. If you intend to use other APIs, make sure to follow best practices for API key management.
 
 Deployed App
-You can access the deployed app on Heroku.
+You can access the deployed app here: https://my-itunes-search-app-f22c878270f1.herokuapp.com/
 
 Feel free to explore and enjoy using the iTunes Search App!
-
-
