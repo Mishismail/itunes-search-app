@@ -77,7 +77,7 @@ function Search() {
       // Hide the alert after a few seconds
       setTimeout(() => {
         setShowAddAlert(false);
-      }, 3000); // You can adjust the duration as needed
+      }, 4000); 
     } catch (error) {
       console.error(error);
     }
@@ -93,7 +93,7 @@ function Search() {
     // Hide the alert after a few seconds
     setTimeout(() => {
       setShowAddAlert(false);
-    }, 10000); // You can adjust the duration as needed
+    }, 4000); 
   };
   
 
@@ -114,7 +114,7 @@ function Search() {
       // Hide the alert after a few seconds
       setTimeout(() => {
         setShowAlert(false);
-      }, 3000); // You can adjust the duration as needed
+      }, 4000);
     } catch (error) {
       console.error(error);
     }
@@ -134,7 +134,7 @@ function Search() {
       ['#ff5f6d', '#ffc371'],
       ['#6A11CB', '#2575FC'],
       ['#FC5C7D', '#6A82FB'],
-      // Add more color combinations here
+      
     ];
     const randomIndex = Math.floor(Math.random() * colors.length);
     const [color1, color2] = colors[randomIndex];
@@ -161,8 +161,8 @@ function Search() {
            <img
             src={appleLogo}
             alt="Apple Logo"
-            className="apple-logo img-fluid" // Add img-fluid for responsive design
-            style={{ maxWidth: '100px' }} // Set a max width to control the size
+            className="apple-logo img-fluid"
+            style={{ maxWidth: '100px' }} 
         />
         <h1 className="search-header" style={{ fontSize: '70px', fontWeight: 'bold' }}>
         <b>iTunes Search</b>
@@ -218,12 +218,12 @@ function Search() {
                   {searchResults.length > 0 ? (
                     <ListGroup>
                       {searchResults.map((result) => (
-                        <ListGroup.Item key={result.trackId}>
+                        <ListGroup.Item key={result.trackId} className="searched-item">
                           {result.trackName}
                     <Button
-                        variant="success"
+                        variant="outline-success"
                         size="sm"
-                        className="ml-2"
+                        className="ml-8"
                         onClick={() => handleAddToFavorites(result)}
                       >
                         Add to Favorites
