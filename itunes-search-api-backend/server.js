@@ -4,10 +4,10 @@
 //iTunes Search API and a simulated favorites array.
 
 
-const express = require('express');
-const helmet = require('helmet'); // Middleware for enhancing security
-const cors = require('cors'); // Middleware for enabling Cross-Origin Resource Sharing
-const fetch = require('node-fetch'); // Library for making HTTP requests
+import express from 'express';
+import helmet from 'helmet'; // Middleware for enhancing security
+import cors from 'cors'; // Middleware for enabling Cross-Origin Resource Sharing
+import fetch from 'node-fetch'; // Library for making HTTP requests
 
 const app = express(); // Create an Express application
 const PORT = process.env.PORT || 3000; // Define the port for the server
