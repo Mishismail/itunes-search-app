@@ -10,7 +10,7 @@ import cors from 'cors'; // Middleware for enabling Cross-Origin Resource Sharin
 import fetch from 'node-fetch'; // Library for making HTTP requests
 
 const app = express(); // Create an Express application
-const PORT = process.env.PORT || 3000; // Define the port for the server
+const PORT = process.env.PORT || 8080; // Define the port for the server
 
 app.use(express.json()); // Parse incoming JSON requests
 app.use(cors()); // Enable CORS for cross-origin requests

@@ -217,16 +217,17 @@ function Search() {
                     </Form.Control>
                   </Form.Group>
                   <div className="mb-3"></div>
-                  <Button variant="primary" onClick={handleSearch}>
-                    {loading ? (
-                      <>
-                        <Spinner animation="border" size="sm" />
-                        {' Searching...'}
-                      </>
+                  <Button data-testid="search-button" variant="primary" onClick={handleSearch}>
+                   {loading ? (
+                    <>
+                  <Spinner animation="border" size="sm" />
+                     {' Searching...'}
+                    </>
                     ) : (
-                      'Search'
-                    )}
+                        'Search'
+                   )}
                   </Button>
+
                 </Form>
                 <div className="mt-4">
                   {searchResults.length > 0 ? (

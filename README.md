@@ -33,6 +33,62 @@ To run this app locally, follow these steps:
 
 5. Open your web browser and access the app at http://localhost:3000.
 
+
+# Testing the App
+
+# Prerequisites for Testing:
+  Node.js and npm installed on your local machine.
+
+# Frontend Testing with Jest:
+
+1. Install Jest (if not already installed):
+   
+   ```bash
+   npm install --save-dev jest
+
+2. Run Frontend Tests:
+
+   Jest will automatically detect and run the test files with names like App.test.js and Favourites.test.js.
+
+   ```bash
+   npm test
+
+3. Review Frontend Test Results:
+
+   Jest will display the test results in the terminal, showing the number of tests run, tests passed, and any test failures. Carefully review the output and address any failed tests by making code adjustments.
+
+
+# Backend Testing with Mocha:
+
+1. Install Mocha and Chai (if not already installed):
+   
+   ```bash
+   npm install --save-dev mocha
+   npm install --save-dev chai
+
+2. Run Backend Tests:
+   
+   Create a test script for your backend tests, typically in a separate directory (e.g., tests/) within your backend project. This command tells Mocha to run the tests defined in server.test.js.
+   
+   Then, add the following command to your package.json scripts:
+   
+   ```bash
+   "scripts": {
+   "test": "mocha tests/server.test.js"
+   }
+
+3. Run Backend Tests:
+
+   To run your backend tests with Mocha, use the following command in your backend project's root directory:
+   
+   ```bash
+   npm test
+
+4. Review Backend Test Results:
+
+   Mocha will display the results in the terminal, showing the number of tests run, tests passed, and any test failures. Carefully review the output and address any failed tests by making code adjustments.
+
+
 # Security Measures
 This app incorporates several security measures to ensure the safety of user data:
 
