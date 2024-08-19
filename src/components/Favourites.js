@@ -3,20 +3,14 @@
 
 import React from 'react';
 import { ListGroup, Button } from 'react-bootstrap';
+import { BsTrash } from 'react-icons/bs';
 
 function Favourites({ favorites, handleRemoveFromFavorites }) {
-  // This component receives an array of 'favorites' and a function 'handleRemoveFromFavorites' as props.
-
   return (
     <div>
-      <h2>Favourites</h2>
-      {/* Display a heading for the favorites section */}
       <ListGroup>
-        {/* Render a ListGroup component to display the list of favorite items */}
         {favorites.map((favorite) => (
-          // Map through the 'favorites' array and create a ListGroup.Item for each favorite
           <ListGroup.Item key={favorite.trackId} className="searched-item">
-            {/* Display the name of the favorite item */}
             {favorite.trackName}
             <Button
               variant="outline-danger"
@@ -24,9 +18,8 @@ function Favourites({ favorites, handleRemoveFromFavorites }) {
               className="ml-2"
               onClick={() => handleRemoveFromFavorites(favorite)}
             >
-              Remove
+              <BsTrash /> {/* Trash icon used here */}
             </Button>
-            {/* Display a 'Remove' button for each favorite item */}
           </ListGroup.Item>
         ))}
       </ListGroup>
@@ -35,7 +28,3 @@ function Favourites({ favorites, handleRemoveFromFavorites }) {
 }
 
 export default Favourites;
-
-
-
-

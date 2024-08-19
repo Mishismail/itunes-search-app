@@ -12,40 +12,54 @@
 
 /* Background styling */
 .background {
-  animation: ombreBackground 10s linear infinite; /* Apply the ombre animation */
+  animation: ombreBackground 10s linear infinite;
   min-height: 100vh;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  background-image: linear-gradient(45deg, #ff5733, #33d9ff, #ff33f4, #33ff42);
-  background-size: 400% 400%; /* Control the size of the gradient */
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  animation: ombreBackground 10s linear infinite;
+  align-items: center; /* Center content vertically */
+  justify-content: center; /* Center content horizontally */
+  background-image: linear-gradient(45deg, #ff7e5f, #feb47b, #6a11cb, #2575fc);
+  background-size: 400% 400%;
 }
 
 /* Search container */
 .search-container {
-  background-color: rgba(245, 236, 244, 0.95);
-  border-radius: 60px;
-  padding: 60px;
+  margin-top: 20px; /* Reduce margin-top */
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  padding: 50px; /* Reduce padding */
   text-align: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  max-width: 1000px;
+  width: 100%;
+  margin: auto;
 }
 
-.searched-item {
-  font-size: 15px; /* Adjust the font size to your preference */
-  font-weight: bold; 
-}
-
-/* Search header styling */
-.search-header {
-  font-size: 30px;
-  font-weight: bold;
+/* Header content styling */
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-bottom: 20px;
+}
+
+.apple-logo {
+  max-width: 70px; /* Adjusted logo size */
+}
+
+.search-header {
+  font-size: 3.5rem; /* Adjusted font size */
+  font-weight: bold;
   color: #333;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* Add a subtle text shadow */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Current track info styling */
+.current-track-info {
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  margin: 20px 0;
+  color: #333;
 }
 
 /* Search form and input styling */
@@ -55,103 +69,196 @@
   align-items: center;
 }
 
-.search-input {
+.search-input-group {
   display: flex;
   align-items: center;
-  border: 1px solid #ccc;
-  border-radius: 30px;
-  padding: 10px 20px;
   margin-bottom: 20px;
+}
+
+.search-input {
+  border: 1px solid #ccc;
+  border-radius: 50px;
+  padding: 10px 25px;
   background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow */
-}
-
-.search-input input {
-  border: none;
-  outline: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   flex: 1;
-  padding: 10px 20px;
-  border-radius: 30px;
   font-size: 18px;
-  color: #333; /* Input text color */
+  color: #333;
 }
 
-/* Search icon styling */
 .search-icon {
   font-size: 24px;
-  margin-left: 20px;
-  color: #333; /* Icon color */
+  margin-left: 10px;
+  color: #333;
 }
 
-/* Button styling */
-button {
-  font-size: 18px;
-  padding: 10px 20px;
-  border-radius: 30px;
+.category-group {
+  margin-bottom: 20px;
+}
+
+.search-button {
+  margin-top: 10px;
+  font-size: 16px;
+  padding: 10px 30px;
+  border-radius: 50px;
   border: none;
   color: #fff;
-  cursor: pointer;
-  transition: background-color 0.3s ease; /* Smooth button hover transition */
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-button:hover {
-  background-color: #c9ddf3; /* Button background color on hover */
-  cursor: pointer;
+.search-button:hover {
+  transform: translateY(-3px);
 }
 
-/* Search results styling */
-.mt-4 {
-  margin-top: 1.5rem;
+/* Neomorphic button effect */
+.neomorphic-button {
+  background: #e0e0e0;
+  border-radius: 30px;
+  box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
+  color: #333;
+}
+
+.neomorphic-button:active {
+  box-shadow: inset 8px 8px 16px #bebebe, inset -8px -8px 16px #ffffff;
+}
+
+/* Track details styling */
+.track-details {
+  flex-grow: 1;
+  text-align: left;
+}
+
+.track-name {
+  font-weight: bold;
+  font-size: 20px;
+  margin-right: 10px;
+}
+
+.track-artist {
+  font-size: 16px;
+  color: #555;
+}
+
+/* Track actions styling */
+.track-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* Media preview styling */
+.media-preview {
+  margin-right: 20px;
+}
+
+.media-preview video, .media-preview img {
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* ListGroup item styling */
 .list-group-item {
-  background-color: transparent;
-  border: none;
-  border-bottom: 1px solid #ccc; /* Add a separator line between items */
-  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 25px;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 15px;
 }
 
 .list-group-item:last-child {
-  border-bottom: none; /* Remove separator line for the last item */
+  border-bottom: none;
 }
 
-.list-group-item:hover {
-  background-color: #f0f0f0; /* Change background color on hover */
+/* Add padding to create space between the heading and the tabs */
+.tabs-container {
+  margin-top: 20px; /* Add some space between header and tabs */
 }
 
-/* Favorites container styling */
-.favorites-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-}
-
-/* Favorites header styling */
-.favorites-header {
-  font-size: 28px;
-  font-weight: bold;
-  margin-bottom: 20px;
+/* Tabs styling */
+.rounded-tabs .nav-link {
+  border-radius: 50px;
+  margin-right: 10px;
+  background-color: #e0e0e0;
   color: #333;
 }
 
-/* Add styles for the custom class 'rounded-tabs' to make tabs rounded */
-.rounded-tabs .nav-link {
-  border-radius: 30px;
-  margin-right: 5px;
-}
-
-/* Active tab style */
 .rounded-tabs .nav-link.active {
-  background-color: #007bff; /* Active tab background color */
-  color: #fff; /* Active tab text color */
+  background-color: #007bff;
+  color: #fff;
 }
 
+.rounded-tabs {
+  margin-bottom: 20px;
+}
+
+/* Additional spacing between the header and the tabs */
+.header-content {
+  margin-bottom: 20px; /* Ensure spacing between the header and tabs */
+}
+
+
+/* Alert fixed positioning */
+.alert-fixed {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1050;
+  width: auto;
+  font-size: 16px;
+  padding: 10px 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Close button styling */
+.alert-fixed .btn-close {
+  padding: 0;
+  margin-left: 10px;
+  background: none;
+  border: none;
+  font-size: 16px;
+}
 
 /* Media queries for responsiveness */
 @media (max-width: 768px) {
-  /* Adjust styles for smaller screens here */
-}
+  .background {
+    padding-top: 10px; /* Adjust for smaller screens */
+  }
 
+  .search-container {
+    padding: 20px; /* Reduce padding on smaller screens */
+    margin-top: 20px; /* Adjust margin for smaller screens */
+  }
+
+  .header-content {
+    flex-direction: column;
+    margin-bottom: 10px;
+  }
+
+  .search-header {
+    font-size: 2.5rem;
+  }
+
+  .apple-logo {
+    max-width: 50px;
+  }
+
+  .list-group-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .track-actions {
+    margin-top: 10px;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .media-preview video, .media-preview img {
+    width: 100%;
+    height: auto;
+  }
+}
 

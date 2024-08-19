@@ -1,11 +1,24 @@
 import React from 'react';
-import renderer from 'react-test-renderer';
-import Search from '../App.js';
+import { createRoot } from 'react-dom/client';
+import { act } from 'react-dom/test-utils';
+import App from '../App';
 
-test('Search component renders correctly', () => {
-  const tree = renderer.create(<Search />).toJSON();
-  expect(tree).toMatchSnapshot();
+let container;
+
+beforeEach(() => {
+  container = document.createElement('div');
+  document.body.appendChild(container);
 });
 
+afterEach(() => {
+  document.body.removeChild(container);
+  container = null;
+});
 
-
+it('renders correctly', () => {
+  const root = createRoot(container);
+  act(() => {
+    root.render(<App />);
+  });
+  expect(container.innerHTML).toMatchSnapshot();
+});

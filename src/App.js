@@ -1,67 +1,129 @@
-//This code is a React.js application that allows users to search for items in the iTunes Store, 
-//manage a list of their favorite items, and provides a visually appealing user interface. 
-
-import React, { useState, useEffect } from 'react';
-import { Container, Form, Button, Spinner, ListGroup, Tab, Tabs, Alert } from 'react-bootstrap';
-import { BsSearch } from 'react-icons/bs'; // Import a search icon
-import './App.css'; // Import your custom CSS styling here
+import React, { useState, useEffect, useRef } from 'react';
+import { Container, Form, Button, Spinner, ListGroup, Tab, Tabs, Alert, CloseButton } from 'react-bootstrap';
+import { BsSearch, BsPlayFill, BsPauseFill, BsStopFill } from 'react-icons/bs';
+import './App.css';
 import appleLogo from './images/apple-logo.png';
-import Favourites from './components/Favourites.js'
+import Favourites from './components/Favourites.js';
 
 function Search() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [mediaType, setMediaType] = useState('all');
+  const [mediaType, setMediaType] = useState('music');
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('search');
   const [favorites, setFavorites] = useState([]);
-  const [showAddAlert, setShowAddAlert] = React.useState(false);
-  const [showAlert, setShowAlert] = React.useState(false);
+  const [showAddAlert, setShowAddAlert] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [currentTrack, setCurrentTrack] = useState(null);
+  const [currentPreview, setCurrentPreview] = useState(null);
+  const audioRef = useRef(null);
+  const videoRef = useRef(null);
 
-  // Function to handle the search process
   const handleSearch = () => {
     setLoading(true);
 
-    // Generate a random callback function name to avoid conflicts
     const callbackName = `itunesSearchCallback_${Date.now()}`;
-    const itunesApiUrl = `https://itunes.apple.com/search?term=${searchTerm}&media=${mediaType}&callback=${callbackName}`;
+    const itunesApiUrl = `https://itunes.apple.com/search?term=${encodeURIComponent(searchTerm)}&media=${encodeURIComponent(mediaType)}&callback=${callbackName}`;
 
-    // Create a script element for JSONP
     const script = document.createElement('script');
     script.src = itunesApiUrl;
 
-    // Define the callback function to handle the JSONP response
     window[callbackName] = (data) => {
       if (data && data.results) {
-        setSearchResults(data.results);
+        setSearchResults(data.results.map(result => {
+          if (result.kind === 'tv-episode' || result.kind === 'feature-movie') {
+            result.previewUrl = result.previewUrl || result.artworkUrl100;
+          } else if (result.kind === 'song' || result.kind === 'music-video') {
+            const highResImageUrl = result.artworkUrl100.replace('100x100bb', '600x600bb');
+            result.previewUrl = highResImageUrl || result.previewUrl;
+          }
+          return result;
+        }));
       } else {
-        // Handle the case where the response is not as expected
         console.error('Invalid JSONP response:', data);
-        // You can display an error message to the user here
       }
 
       setLoading(false);
-
-      // Clean up by removing the script tag and callback function
       document.body.removeChild(script);
       delete window[callbackName];
     };
 
-    // Error handling for script load errors
     script.onerror = (error) => {
       console.error('Error loading JSONP script:', error);
       setLoading(false);
-      // You can display an error message to the user here
     };
 
-    // Append the script tag to the document to initiate the JSONP request
     document.body.appendChild(script);
   };
 
-  // Function to add an item to favorites
+  const handlePlayMedia = (track) => {
+    stopCurrentMedia(); // Stop any currently playing media
+
+    if (track.kind === 'song' || track.kind === 'music-video') {
+        setCurrentTrack(track);
+        if (audioRef.current) {
+            audioRef.current.src = track.previewUrl;
+
+            audioRef.current.onloadeddata = () => {
+                // Check if the audio can be played
+                if (audioRef.current.readyState >= 2) {
+                    audioRef.current.play().catch(error => {
+                        console.error("Error playing the audio track:", error);
+                    });
+                } else {
+                    console.error("Audio cannot be played; unsupported format or failed loading.");
+                }
+            };
+        }
+    }
+
+    setShowAlert(true);
+    setAlertMessage('Playing: ' + track.trackName);
+    setTimeout(() => {
+      setShowAlert(false);
+    }, 4000);
+};
+
+  const handlePauseMedia = () => {
+    if (currentPreview && videoRef.current) {
+      videoRef.current.pause();
+    } else if (currentTrack && audioRef.current) {
+      audioRef.current.pause();
+    }
+
+    setShowAlert(true);
+    setAlertMessage('Paused');
+    setTimeout(() => {
+      setShowAlert(false);
+    }, 4000);
+  };
+
+  const handleStopMedia = () => {
+    stopCurrentMedia(); // Use the function to stop any current media
+
+    setShowAlert(true);
+    setAlertMessage('Stopped');
+    setTimeout(() => {
+      setShowAlert(false);
+    }, 4000);
+  };
+
+  const stopCurrentMedia = () => {
+    if (videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+    }
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+    setCurrentPreview(null);
+    setCurrentTrack(null);
+  };
+
   const addToFavorites = async (item) => {
     try {
-      // Make a POST request to add the item to favorites
       const response = await fetch('/api/favourites', {
         method: 'POST',
         headers: {
@@ -73,10 +135,7 @@ function Search() {
       const data = await response.json();
       setFavorites([...favorites, data]);
 
-      // Show the alert
       setShowAddAlert(true);
-
-      // Hide the alert after a few seconds
       setTimeout(() => {
         setShowAddAlert(false);
       }, 4000);
@@ -85,36 +144,27 @@ function Search() {
     }
   };
 
-  // Function to handle adding an item to favorites
   const handleAddToFavorites = (item) => {
     addToFavorites(item);
     setFavorites([...favorites, item]);
 
-    // Show the alert
     setShowAddAlert(true);
-
-    // Hide the alert after a few seconds
     setTimeout(() => {
       setShowAddAlert(false);
     }, 4000);
   };
 
-  // Function to handle removing an item from favorites
   const handleRemoveFromFavorites = async (itemToRemove) => {
     try {
-      // Make a DELETE request to remove the item from favorites
-      await fetch(`/api/favourites/${itemToRemove.id}`, {
+      await fetch(`/api/favourites/${itemToRemove.trackId}`, {
         method: 'DELETE',
       });
 
-      // Update favorites state by removing only the selected item
-      const updatedFavorites = favorites.filter((item) => item.id !== itemToRemove.id);
+      const updatedFavorites = favorites.filter((item) => item.trackId !== itemToRemove.trackId);
       setFavorites(updatedFavorites);
 
-      // Show the alert
       setShowAlert(true);
-
-      // Hide the alert after a few seconds
+      setAlertMessage('Item removed from favorites!');
       setTimeout(() => {
         setShowAlert(false);
       }, 4000);
@@ -123,7 +173,6 @@ function Search() {
     }
   };
 
-  // Fetch user's favorite content from the server and update the state on component mount
   useEffect(() => {
     fetch('/api/favourites')
       .then((response) => response.json())
@@ -131,13 +180,12 @@ function Search() {
       .catch((error) => console.error(error));
   }, []);
 
-  // Set a random background color on component mount
   useEffect(() => {
     const background = document.querySelector('.background');
     const colors = [
-      ['#ff5f6d', '#ffc371'],
-      ['#6A11CB', '#2575FC'],
-      ['#FC5C7D', '#6A82FB'],
+      ['#ff7e5f', '#feb47b'],
+      ['#6a11cb', '#2575fc'],
+      ['#fc5c7d', '#6a82fb'],
     ];
     const randomIndex = Math.floor(Math.random() * colors.length);
     const [color1, color2] = colors[randomIndex];
@@ -147,64 +195,43 @@ function Search() {
   return (
     <div className="background">
       <Container>
-        {/* Display the alert when showAddAlert is true */}
         {showAddAlert && (
-          <Alert
-            variant="success"
-            onClose={() => setShowAddAlert(false)}
-            dismissible
-          >
+          <Alert variant="success" onClose={() => setShowAddAlert(false)} dismissible className="alert-fixed">
             Item added to favorites!
           </Alert>
         )}
-        {/* Display the alert when showAlert is true */}
         {showAlert && (
-          <Alert
-            variant="success"
-            onClose={() => setShowAlert(false)}
-            dismissible
-          >
-            Item removed from favorites!
+          <Alert variant="info" onClose={() => setShowAlert(false)} dismissible className="alert-fixed">
+            {alertMessage}
+            <CloseButton onClick={() => setShowAlert(false)} aria-label="Close" />
           </Alert>
+        )}
+        {currentTrack && (
+          <div className="current-track-info">
+            Now Playing: {currentTrack.trackName} by {currentTrack.artistName}
+          </div>
         )}
         <div className="search-container">
           <div className="header-content">
-            <img
-              src={appleLogo}
-              alt="Apple Logo"
-              className="apple-logo img-fluid"
-              style={{ maxWidth: '100px' }}
-            />
-            <h1
-              className="search-header"
-              style={{ fontSize: '70px', fontWeight: 'bold' }}
-            >
-              <b>iTunes Search</b>
-            </h1>
+            <img src={appleLogo} alt="Apple Logo" className="apple-logo img-fluid" />
+            <h1 className="search-header">iTunes Search</h1>
           </div>
           <div className="search-content">
-            <Tabs
-              activeKey={activeTab}
-              onSelect={(key) => setActiveTab(key)}
-              className="rounded-tabs"
-            >
+            <Tabs activeKey={activeTab} onSelect={(key) => setActiveTab(key)} className="rounded-tabs">
               <Tab eventKey="search" title="Search">
                 <Form className="search-form">
-                  <Form.Group className="search-input">
+                  <Form.Group className="search-input-group">
                     <Form.Control
                       type="text"
-                      placeholder="Search..."
+                      placeholder="Search music, etc..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
+                      className="search-input"
                     />
                     <BsSearch className="search-icon" />
                   </Form.Group>
-                  <Form.Group>
-                    <Form.Control
-                      as="select"
-                      value={mediaType}
-                      onChange={(e) => setMediaType(e.target.value)}
-                    >
+                  <Form.Group className="category-group">
+                    <Form.Control as="select" value={mediaType} onChange={(e) => setMediaType(e.target.value)}>
                       <option value="all">All</option>
                       <option value="movie">Movie</option>
                       <option value="podcast">Podcast</option>
@@ -216,62 +243,105 @@ function Search() {
                       <option value="ebook">Ebook</option>
                     </Form.Control>
                   </Form.Group>
-                  <div className="mb-3"></div>
-                  <Button data-testid="search-button" variant="primary" onClick={handleSearch}>
-                   {loading ? (
-                    <>
-                  <Spinner animation="border" size="sm" />
-                     {' Searching...'}
-                    </>
+                  <Button data-testid="search-button" variant="primary" onClick={handleSearch} className="search-button">
+                    {loading ? (
+                      <>
+                        <Spinner animation="border" size="sm" />
+                        {' Searching...'}
+                      </>
                     ) : (
-                        'Search'
-                   )}
+                      'Search'
+                    )}
                   </Button>
-
                 </Form>
                 <div className="mt-4">
                   {searchResults.length > 0 ? (
                     <ListGroup>
                       {searchResults.map((result) => (
-                        <ListGroup.Item
-                          key={result.trackId}
-                          className="searched-item"
-                        >
-                          {result.trackName}
-                          <Button
-                            variant="outline-success"
-                            size="sm"
-                            className="ml-8"
-                            onClick={() => handleAddToFavorites(result)}
-                          >
-                            Add to Favorites
-                          </Button>
+                        <ListGroup.Item key={result.trackId} className="searched-item">
+                          <div className="media-preview">
+                            {result.kind === 'tv-episode' || result.kind === 'feature-movie' ? (
+                              <video
+                                ref={videoRef}
+                                width="300"
+                                height="200"
+                                controls
+                              >
+                                <source src={result.previewUrl} type="video/mp4" />
+                                Your browser does not support the video tag.
+                              </video>
+                            ) : result.kind === 'song' || result.kind === 'music-video' ? (
+                              <img
+                                src={result.artworkUrl100.replace('100x100bb', '600x600bb') || result.previewUrl || 'default_image_url_here'}
+                                alt={`${result.trackName} artwork`}
+                                width="300"
+                                height="300"
+                              />
+                            ) : null}
+                          </div>
+                          <div className="track-details">
+                            <span className="track-name">{result.trackName}</span>
+                            <span className="track-artist">{result.artistName}</span>
+                          </div>
+                          {result.kind === 'song' || result.kind === 'music-video' ? (
+                            <div className="track-actions">
+                              <Button
+                                className="neomorphic-button"
+                                variant="outline-success"
+                                size="sm"
+                                onClick={() => handleAddToFavorites(result)}
+                              >
+                                Add to Favorites
+                              </Button>
+                              <Button
+                                className="neomorphic-button"
+                                variant="outline-primary"
+                                size="sm"
+                                onClick={() => handlePlayMedia(result)}
+                              >
+                                <BsPlayFill />
+                              </Button>
+                              <Button
+                                className="neomorphic-button"
+                                variant="outline-warning"
+                                size="sm"
+                                onClick={handlePauseMedia}
+                              >
+                                <BsPauseFill />
+                              </Button>
+                              <Button
+                                className="neomorphic-button"
+                                variant="outline-danger"
+                                size="sm"
+                                onClick={handleStopMedia}
+                              >
+                                <BsStopFill />
+                              </Button>
+                            </div>
+                          ) : null}
                         </ListGroup.Item>
                       ))}
                     </ListGroup>
                   ) : (
-                    <p>Results</p>
+                    <p>No Results Found</p>
                   )}
                 </div>
               </Tab>
-              <Tab eventKey="favourite" title="Favourites">
+              <Tab eventKey="favourite" title="Favorites">
                 <Favourites
                   addToFavorites={handleAddToFavorites}
                   removeFromFavorites={handleRemoveFromFavorites}
                   favorites={favorites}
-                  handleRemoveFromFavorites={handleRemoveFromFavorites} // Pass the function here
+                  handleRemoveFromFavorites={handleRemoveFromFavorites}
                 />
               </Tab>
             </Tabs>
           </div>
         </div>
+        <audio ref={audioRef} />
       </Container>
     </div>
   );
 }
 
 export default Search;
-
-
-
-
